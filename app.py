@@ -29,10 +29,20 @@ def home():
 def chat():
     client = get_groq_client()
     if not client:
-        # Diagnostic: check if the env var exists but is empty
+        # Diagnostic: check all environment variable keys for anything similar
+        all_keys = os.environ.keys()
+        groq_related_keys = [k for k in all_keys if "GROQ" in k.upper()]
+        
+        print(f"DEBUG: GROQ_API_KEY not found. Related keys found in environment: {groq_related_keys}")
+        
         raw_key = os.getenv("GROQ_API_KEY")
-        print(f"DEBUG: GROQ_API_KEY check - Found: {raw_key is not None}, Length: {len(raw_key) if raw_key else 0}")
-        return jsonify({"error": "GROQ_API_KEY is not configured on Render. Please check your Environment Variables."})
+        return jsonify({
+            "error": "GROQ_API_KEY is missing.",
+            "diagnostics": {
+                "detected_groq_keys": groq_related_keys,
+                "found_exact_match": raw_key is not None
+            }
+        })
     
     global chat_history
     data = request.get_json()
