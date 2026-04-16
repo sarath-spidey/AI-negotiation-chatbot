@@ -8,9 +8,12 @@ load_dotenv(override=True)
 
 app = Flask(__name__)
 
-# Initialize client if API key is present
-api_key = os.getenv("GROQ_API_KEY")
-client = Groq(api_key=api_key) if api_key else None
+def get_groq_client():
+    """Helper to initialize client only when needed."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return None
+    return Groq(api_key=api_key)
 
 # Global chat history to maintain context
 chat_history = []
@@ -24,8 +27,12 @@ def home():
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    client = get_groq_client()
     if not client:
-        return jsonify({"error": "GROQ_API_KEY is not configured on Render. Please add it to your Environment Variables."})
+        # Diagnostic: check if the env var exists but is empty
+        raw_key = os.getenv("GROQ_API_KEY")
+        print(f"DEBUG: GROQ_API_KEY check - Found: {raw_key is not None}, Length: {len(raw_key) if raw_key else 0}")
+        return jsonify({"error": "GROQ_API_KEY is not configured on Render. Please check your Environment Variables."})
     
     global chat_history
     data = request.get_json()
