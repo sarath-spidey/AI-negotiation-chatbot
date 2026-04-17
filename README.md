@@ -2,7 +2,7 @@
 
 A premium, AI-powered negotiation platform that uses **Llama 3.1 (via Groq)** to simulate professional business negotiations. Featuring a stunning modern UI and intelligent conversation memory, this chatbot is designed to help users refine their bargaining skills.
 
-![Premium UI Design](./assets/Screenshot 2026-04-17 205330.png)
+![Premium UI Design](assets/preview.png)
 
 ## ✨ Features
 
